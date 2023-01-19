@@ -56,7 +56,7 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
         searchTrainingTasks({searchTerm: this.searchTerm, programId: this.recordId})
         .then(result => {
             this.trainingTasks = result;
-            //this.template.querySelector('[data-id="datatable"]').selectedRows = this.selectedTrainingTasks;
+            this.template.querySelector('[data-id="datatable"]').selectedRows = this.selectedRows;
         })
         .catch(error => {
             // Handle error
@@ -65,17 +65,42 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
     }
     
     getSelectedRows(event){
-        const selectedRows = event.detail.selectedRows;
-        console.log(this.disableButton);
-        console.log(selectedRows);
-        if(selectedRows.length > 0){
+        
+        let updatedItemsSet = new Set();
+        // List of selected items we maintain.
+        let selectedItemsSet = new Set(this.selectedRows);
+        // List of items currently loaded for the current view.
+        let loadedItemsSet = new Set();
+        this.trainingTasks.map((ele) => {
+            loadedItemsSet.add(ele.Id);
+        });
+        if (event.detail.selectedRows) {
+            event.detail.selectedRows.map((ele) => {
+                updatedItemsSet.add(ele.Id);
+            });
+
+            // Add any new items to the selectedRows list
+            updatedItemsSet.forEach((id) => {
+                if (!selectedItemsSet.has(id)) {
+                    selectedItemsSet.add(id);
+                }
+            });
+        }
+        loadedItemsSet.forEach((id) => {
+            if (selectedItemsSet.has(id) && !updatedItemsSet.has(id)) {
+                // Remove any items that were unselected.
+                selectedItemsSet.delete(id);
+            }
+        });
+
+        this.selectedRows = [...selectedItemsSet];
+        console.log('selectedRows==> ' + JSON.stringify(this.selectedRows));
+        if(selectedItemsSet.size > 0){
             this.disableButton = false;
         }
         else{
             this.disableButton = true;
         }
-        this.selectedTrainingTasks = selectedRows;
-        
     }
 
     showPage1(){
