@@ -1,0 +1,28 @@
+<template>
+    <div class="slds-modal_container">
+        <div class="slds-modal__header">
+            <h1 class="slds-modal__title">
+                Add New Program Assignments
+            </h1>
+        </div>
+    <div class="slds-modal__content"
+    style="max-height: 200px;">
+        <lightning-datatable columns={columns}
+                             data={programAssignees}
+                             key-field="Id"
+                             onrowselection={getSelectedRows}
+                             >
+        </lightning-datatable>
+    </div>
+
+    <div class="slds-modal__footer">
+        <span class = "slds-align_absolute-center">
+            <lightning-button position="center" 
+                              variant="brand" 
+                              label="Add Program Assignments"
+                              disabled={disableButton} 
+                              onclick={addSelectedProgramAssignees}></lightning-button>
+        </span>
+        </div>
+    </div>
+</template>

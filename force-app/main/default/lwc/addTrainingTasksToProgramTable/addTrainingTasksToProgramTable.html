@@ -1,0 +1,148 @@
+<template>
+    <template if:true={modalShown}>
+        <template if:true={page1Shown}>
+            <div class="slds-modal_container">
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title">
+                        Add Training Tasks to Program
+                    </h1>
+                </div>
+                <lightning-input    type="text" 
+                                    value={searchTerm} 
+                                    onchange={handleSearch} 
+                                    placeholder="Search Training Tasks...">
+                </lightning-input>
+            <div class="slds-modal__content"
+                 style="height: 200px;">
+                 
+                <lightning-datatable 
+                                    data-id="datatable"
+                                    columns={columns}
+                                     data={trainingTasks}
+                                     key-field="Id"
+                                     required="true"
+                                     show-row-number-column="true"
+                                                              
+                                     onrowselection={getSelectedRows}
+                                        >
+                </lightning-datatable>
+                <!--
+                <lightning-datatable 
+                                    data-id="datatable"                                    
+                                     columns={columns}
+                                     data={data}
+                                     key-field="Id"
+                                     required="true"
+                                     show-row-number-column="true"
+                                     selected-rows={selectedRows}                            
+                                     onrowselection={handleRowSelection}
+                                        >
+                </lightning-datatable>-->
+            
+            </div>
+
+            <div class="slds-modal__footer">
+                <span class = "slds-align_absolute-center">
+                    <lightning-button position="center" 
+                                      variant="brand" 
+                                      label="Add Tasks"
+                                      disabled={disableButton} 
+                                      onclick={showPage2}></lightning-button>
+                </span>
+                </div>
+            </div>
+        </template>
+        <template if:true={page2Shown}>
+            <div class="slds-modal_container">
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title">
+                        Add Days in Program Due to Program Tasks
+                    </h1>
+                </div>
+            </div>
+            <div class="slds-modal__content"
+                style="max-height: 200px;">
+                <lightning-card>
+                    <div class="slds-p-horizontal-small">
+                        <template for:each={selectedTrainingTasks} for:item="task">
+                            <lightning-input type="number"
+                                            style='padding: 10px'
+                                            key={task.Id} 
+                                            data-key={task.Id} 
+                                            value={dueDay}
+                                            label={task.Name}
+                                            placeholder="Input Day in Prorgam Due..."
+                                            onchange={handleInput}
+                                            data-field-api-name="Program_Task__c.Day_in_Program_Due__c"
+                                            required="true"></lightning-input>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+
+            <div class="slds-modal__footer">
+                <span class = "slds-align_absolute-center">
+                    <!--<lightning-button   position="center" 
+                                        variant="neutral" 
+                                        label="Cancel" 
+                                        onclick={closeQuickAction} ></lightning-button>-->
+                    <span class = "slds-p-right_x-small">
+                        <lightning-button   position="center" 
+                                            variant="neutral" 
+                                            label="Back" 
+                                            onclick={showPage1} ></lightning-button>
+                    </span>
+                    <span class = "slds-p-right_x-small">
+                        <lightning-button   position="center" 
+                                            variant="brand" 
+                                            label="Add Day in Program Due" 
+                                            disabled={dueDateNotAdded}
+                                            onclick={addSelectedTasks} ></lightning-button>
+                    </span>
+                </span>
+             </div>     
+        </template>
+        <template if:true={page3Shown}>
+            <div class="slds-modal_container">
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title">
+                        Add Task Assignments to Trainees
+                    </h1>
+                </div>
+            </div>
+            <div class="slds-modal__content">
+                <lightning-datatable columns={columnsProgramAssignees}
+                                     data={programAssignees}
+                                     key-field="Id"
+                                     onrowselection={getSelectedTaskAssignmentRows}>
+
+                </lightning-datatable>
+            </div>
+
+            <div class="slds-modal__footer">
+                <span class = "slds-align_absolute-center">
+                    <!--<span class = "slds-p-right_x-small">
+                    <lightning-button   position="center" 
+                                        variant="neutral" 
+                                        label="Back" 
+                                        onclick={showPage2} ></lightning-button>
+                    </span>-->
+                    <span class = "slds-p-right_x-small">
+                    <lightning-button   position="center" 
+                                        variant="brand" 
+                                        label="Add Task Assignments" 
+                                        onclick={addSelectedTaskAssignments}
+                                        disabled={disableAddSelectedTaskAssignments} ></lightning-button>
+                    </span>         
+                    <span class = "slds-p-right_x-small">
+                    <lightning-button   position="center" 
+                                        variant="neutral" 
+                                        label="Finish" 
+                                        onclick={addSelectedTaskAssignments} ></lightning-button>
+                    </span>
+
+                </span>
+             </div>     
+        </template>
+    </template>
+</template>
