@@ -26,6 +26,21 @@ public with sharing class AddTrainingTasksToProgramController {
     }
 
     @AuraEnabled
+    public static List<Training_Task__c> getSelectedTrainingTasks(List<Id> selectedTrainingTasks){
+        System.debug(selectedTrainingTasks);
+        List <Training_Task__c> trainingTasksList = new List <Training_Task__c> ([
+                                                                                SELECT Name, Id, Days_Needed_to_Complete__c
+                                                                                FROM Training_Task__c
+                                                                                WHERE Id IN  :selectedTrainingTasks
+                                                                                ORDER BY Name
+                                                                                /*LIMIT :limitSize*/
+                                                                                /*OFFSET :offset*/]);
+        System.debug(trainingTasksList);
+       
+        return trainingTasksList;
+    }
+
+    @AuraEnabled
     public static List<Id> getProgramTaskIds(Id programId){
         try {
                 List<Program_Task__c> PTList = new List<Program_Task__c>([SELECT Training_Task__r.Id

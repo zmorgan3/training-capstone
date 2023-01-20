@@ -1,4 +1,5 @@
 import { LightningElement, api, wire, track} from 'lwc'
+import getSelectedTrainingTasks from '@salesforce/apex/AddTrainingTasksToProgramController.getSelectedTrainingTasks'
 import { CloseActionScreenEvent } from 'lightning/actions';
 import searchTrainingTasks from '@salesforce/apex/AddTrainingTasksToProgramController.searchTrainingTasks';
 //import Training_Task__C from '@salesforce/schema/TrainingTask__c.Name';
@@ -50,7 +51,7 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
     handleSearch(event) {
         
         this.searchTerm = event.target.value;
-        this.selectedTrainingTasks = searchTrainingTasks;
+        //this.selectedTrainingTasks = searchTrainingTasks;
         
 
         searchTrainingTasks({searchTerm: this.searchTerm, programId: this.recordId})
@@ -65,7 +66,6 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
     }
     
     getSelectedRows(event){
-        
         let updatedItemsSet = new Set();
         // List of selected items we maintain.
         let selectedItemsSet = new Set(this.selectedRows);
@@ -95,12 +95,26 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
 
         this.selectedRows = [...selectedItemsSet];
         console.log('selectedRows==> ' + JSON.stringify(this.selectedRows));
+
+        getSelectedTrainingTasks({selectedTrainingTasks: this.selectedRows})
+        .then(result => {
+            this.selectedTrainingTasks = result;
+            console.log('SELECTED TASKS HERE')
+            console.log(this.selectedTrainingTasks);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
         if(selectedItemsSet.size > 0){
             this.disableButton = false;
         }
         else{
             this.disableButton = true;
         }
+        this.selectedTrainingTasks = selectedItemsSet;
+        console.log('selected training tasks are');
+        console.log(this.selectedTrainingTasks);
     }
 
     showPage1(){
@@ -108,6 +122,8 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
         this.page2Shown= false;
         this.page3Shown=false;
         this.disableButton = true;
+        this.selectedRows = null;
+        this.selectedTrainingTasks = null;
     }
 
     showPage2(){
@@ -151,6 +167,7 @@ export default class AddTrainingTasksToProgramTable extends LightningElement {
 
 
     addSelectedTasks(){
+        console.log('Selected Training Tasks in addSelectedTasks:')
         let detail = {
             trainingTasksToAdd: this.selectedTrainingTasks, 
             daysToAdd: this.inputMap
